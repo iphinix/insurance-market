@@ -5,20 +5,22 @@ from django.views.generic import View, CreateView, ListView, DetailView, UpdateV
 #from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView, LogoutView
 from .forms import CreationCompanyForm, LoginCompanyForm, ProductModelForm
+from .models import Product
 
-class RegisterCompany(CreateView):
+class RegisterCompanyView(CreateView):
     form_class = CreationCompanyForm
     template_name = 'register.html'
     success_url = 'login'
 
 
-class LoginCompany(LoginView):
+class LoginCompanyView(LoginView):
     form_class = LoginCompanyForm
     template_name = 'login.html'
     success_url = 'home'
 
 
-class ProductList(ListView):
-    form_class = ProductModelForm
+class ProductListView(ListView):
+    #form_class = ProductModelForm
+    model = Product
     template_name = 'index.html'
     success_url = 'home'

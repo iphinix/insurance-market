@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from market import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('', ProductList.as_view(), name='home'),
-    #path('register/', RegisterCompany.as_view(), name='register'),
-    #path('login/', LoginCompany.as_view(), name='login'),
+    path('', views.ProductListView.as_view(), name='home'),
+    #path('register/', RegisterCompanyView.as_view(), name='register'),
+    #path('login/', LoginCompanyView.as_view(), name='login'),
 ]

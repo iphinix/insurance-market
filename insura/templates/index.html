@@ -1,5 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-      <font size=7, color="blue">Список</font>
+      <font size=6, color="blue">Список</font>
+      <p></p>
+<form action="" method="get">
+    {% csrf_token %}
+    <table>
+      {% for product in product_list %}
+      <li>
+                 {{ product.name }} {{ product.company }} {{ product.type }} {{ product.rate }} {{ product.period }}
+      </li>
+      {% endfor %}
+    </table>
+    <p></p>
+    <input type="submit" value="Ok"/>
+</form>
 {% endblock %}
+
+
