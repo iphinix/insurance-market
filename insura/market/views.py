@@ -34,3 +34,12 @@ class ProductFilterView(View):
         product_model_form = ProductModelForm()
         product_filter = Product.objects.filter()
         return render(request, self.template_name, {'products': product_filter, 'filter_form': product_model_form})
+
+    def post(self, request):
+        product_model_form = ProductModelForm(request.POST)
+        if product_model_form.is_valid():
+            pass
+        else:
+            pass
+
+
