@@ -1,10 +1,11 @@
+from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from .models import Company, Product, Response
 
 
-class CreationCompanyForm(UserCreationForm):
+class RegisterCompanyForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'password1', 'password2')
@@ -25,7 +26,8 @@ class CompanyModelForm(ModelForm):
 class ProductModelForm(ModelForm):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ['type']
+    #type_field = forms.ChoiceField(choices=Product.TYPE_CHOICES)
 
 
 class ResponseModelForm(ModelForm):

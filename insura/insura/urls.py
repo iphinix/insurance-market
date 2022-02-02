@@ -19,7 +19,8 @@ from market import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.ProductListView.as_view(), name='home'),
+    #path('', views.ProductListView.as_view(), name='home'),
+    path('', views.ProductFilterView.as_view(), name='home'),
     #path('register/', RegisterCompanyView.as_view(), name='register'),
     #path('login/', LoginCompanyView.as_view(), name='login'),
 ]
