@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-      <div style="font-size: 250%; color: blue; position: absolute; top: 10%; left: 35%">Список продуктов компаний</div>
-<!--  <form action="" method="get">
-       {% csrf_token %} -->
+      <div style="font-size: 225%; color: blue; position: absolute; top: 15%; left: 40%">Список продуктов компаний</div>
+<form  method="post">
+       {% csrf_token %}
+        <span style="font-size: 125%; position: absolute; top: 20%; left: 2%">{{filter_form.as_p}}</span>
+        <input style="font-size: 110%; position: absolute; top: 70%; left: 5%" type="submit" value="Применить"/>
+</form>
+<form  action="" method="get">
+        <input style="font-size: 110%; position: absolute; top: 77%; left: 5%" type="submit" value=" Сбросить "/>
+</form>
+
     <table style="font-size: 125%; position: absolute; top: 30%; left: 30%">
          <tr>
           <td>Тип &nbsp&nbsp&nbsp&nbsp</td>
@@ -12,20 +19,18 @@
           <td>Период &nbsp&nbsp&nbsp&nbsp</td>
           <td>Компания</td>
          </tr>
-      {% for product in product_list %}
+      {% for element in products %}
          <tr>
-          <td>{{ product.type }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ product.name }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ product.rate }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ product.period }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ product.company }}</td>
+          <td>{{ element.type }} &nbsp&nbsp&nbsp&nbsp</td>
+             <td> <a href="{% url 'product' element.pk %}"> {{ element.name }} </a> &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ element.rate }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ element.period }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ element.company }}</td>
          </tr>
         <tr>
         </tr>
       {% endfor %}
     </table>
-<!--        <input type="submit" value="Ok"/>
-</form> -->
 {% endblock %}
 
 

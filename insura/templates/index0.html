@@ -2,12 +2,8 @@
 
 {% block content %}
       <div style="font-size: 250%; color: blue; position: absolute; top: 10%; left: 35%">Список продуктов компаний</div>
-<form action="" method="get">
-       {% csrf_token %}
-        <span style="font-size: 125%; position: absolute; top: 70%; left: 30%">{{filter_form}}</span>
-        <input style="font-size: 110%; position: absolute; top: 70%; right: 40%" type="submit" value="Ok"/>
-</form>
-
+<!--  <form action="" method="get">
+       {% csrf_token %} -->
     <table style="font-size: 125%; position: absolute; top: 30%; left: 30%">
          <tr>
           <td>Тип &nbsp&nbsp&nbsp&nbsp</td>
@@ -16,18 +12,20 @@
           <td>Период &nbsp&nbsp&nbsp&nbsp</td>
           <td>Компания</td>
          </tr>
-      {% for element in products %}
+      {% for product in product_list %}
          <tr>
-          <td>{{ element.type }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.name }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.rate }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.period }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.company }}</td>
+          <td>{{ product.type }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ product.name }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ product.rate }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ product.period }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ product.company }}</td>
          </tr>
         <tr>
         </tr>
       {% endfor %}
     </table>
+<!--        <input type="submit" value="Ok"/>
+</form> -->
 {% endblock %}
 
 
