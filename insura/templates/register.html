@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form style="font-size: 120%; position: absolute; top: 30%; left: 40%"  method="post">
+    {% csrf_token %}
+{% for f in form %}
+<p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
+<div class="form-error">{{ f.errors }}</div>
+{% endfor %}
+    <input  type="submit" value="Ok"/>
+    </form>
+</body>
+</html>
+
+
+
+
+
+

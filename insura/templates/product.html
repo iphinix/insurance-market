@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="font-size: 135%; position: absolute; top: 20%; left: 40%">
+          Продукт: &nbsp {{ product.name }} <br>
+          Компания: &nbsp {{ product.company }}  <br>
+          Тип продукта: &nbsp {{ product.type }} <br>
+          Ставка: &nbsp {{ product.rate }} <br>
+          Срок страховки: &nbsp {{ product.period }} <br>
+          Описание продукта: &nbsp {{ product.description }} <br>
+</div>
+<div style="font-size: 135%; position: absolute; top: 60%; left: 20%">
+Откликнуться на продукт:
+</div>
+ <form method="post">
+       {% csrf_token %}
+        <span style="font-size: 125%; position: absolute; top: 70%; left: 30%">{{response_form}}</span>
+        <input style="font-size: 110%; position: absolute; top: 80%; right: 35%" type="submit" value="Ok"/>
+</form>
+</body>
+</html>
