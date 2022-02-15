@@ -20,9 +20,10 @@ class LoginCompanyForm(AuthenticationForm):
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-input'}))
 
 
-class CompanyModelForm(forms.Form):
-    name = forms.CharField(label='Название комании', widget=forms.TextInput(attrs={'class': 'form-input'}))
-    description = forms.CharField(label='Описание комании', widget=forms.TextInput(attrs={'class': 'form-input'}))
+class CompanyModelForm(ModelForm):
+    class Meta:
+        model = Company
+        fields = ['name', 'description', 'email']
 
 
 class ProductModelForm(ModelForm):
@@ -43,6 +44,28 @@ class ProductModelForm(ModelForm):
 
     rate_min_field = forms.IntegerField(label='Ставка от:', required=False, widget=forms.TextInput(attrs={'class': 'form-input'}))
     rate_max_field = forms.IntegerField(label='Ставка до:', required=False, widget=forms.TextInput(attrs={'class': 'form-input'}))
+
+
+class ProductModelFormES(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.Meta.required:
+            self.fields[field].required = False
+
+    class Meta:
+        model = Product
+        fields = ['type', 'period', 'company', 'name', 'description']
+        required = (
+            'type',
+            'period',
+            'company',
+            'name',
+            'description'
+        )
+
+    rate_min_field = forms.IntegerField(label='Ставка от:', required=False, widget=forms.TextInput(attrs={'class': 'form-input'}))
+    rate_max_field = forms.IntegerField(label='Ставка до:', required=False, widget=forms.TextInput(attrs={'class': 'form-input'}))
+    field_order = ['type', 'period', 'company', 'name', 'rate_min_field', 'rate_max_field', 'description']
 
 
 class ResponseModelForm(ModelForm):

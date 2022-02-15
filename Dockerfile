@@ -1,6 +1,6 @@
 FROM python:3.10
 ENV PYTHONUNBUFFERED=1
-WORKDIR /insura
-COPY insura/requirements.txt /insura/
-RUN pip install --upgrade pip && pip install -r requirements.txt
-COPY insura /insura
+WORKDIR /code
+COPY insura/requirements.txt /code/
+COPY .env /
+RUN pip install -r requirements.txt

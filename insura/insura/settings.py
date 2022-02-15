@@ -11,20 +11,23 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os.path
+from environs import Env
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = Env()
+env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_l4iqd+t4z$6@@9gx4m4p$fuxl5-j!zechwjx8ve3l^hx=m73$'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -33,6 +36,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'market',
+    'django_elasticsearch_dsl',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,16 +75,26 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'insura.wsgi.application'
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': env('ELASTICSEARCH_HOST')
+    },
+}
 
+WSGI_APPLICATION = 'insura.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': env('POSTGRES_HOST'),
+        'PORT': 5432,
     }
 }
 
