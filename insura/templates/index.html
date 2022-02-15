@@ -22,10 +22,10 @@
       {% for element in products %}
          <tr>
           <td>{{ element.type }} &nbsp&nbsp&nbsp&nbsp</td>
-             <td> <a href="{% url 'product' element.pk %}"> {{ element.name }} </a> &nbsp&nbsp&nbsp&nbsp</td>
+             <td> <a href="{% url 'product' element.id %}"> {{ element.name }} </a> &nbsp&nbsp&nbsp&nbsp</td>
           <td>{{ element.rate }} &nbsp&nbsp&nbsp&nbsp</td>
           <td>{{ element.period }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.company }}</td>
+          <td>{{ element.company.name }}</td>
          </tr>
         <tr>
         </tr>
