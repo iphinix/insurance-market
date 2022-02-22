@@ -8,6 +8,9 @@ from .forms import RegisterCompanyForm, LoginCompanyForm, ProductModelForm, Prod
 from .models import Company, Product, Response, User
 from .documents import ProductDocument
 from elasticsearch_dsl.query import Q
+from insura.tasks import send_email_task
+from django.utils import timezone
+from datetime import datetime
 
 
 class RegisterCompanyView(CreateView):
@@ -97,6 +100,7 @@ class ProductFilterViewES(View):
         return query_set
 
     def get(self, request):
+        #print('ДатаВремя', datetime.now(), 'ТаймЗоне', timezone.now())
         product_model_form = ProductModelFormES()
         product_filter = self.get_queryset(request)
         return render(request, self.template_name, {'products': product_filter, 'filter_form': product_model_form})
@@ -122,6 +126,10 @@ class ProductDetailView(View):
         response.company_id = product.company_id
         response.product_id = product.pk
         response.save()
+        email = product.company.email
+        subject = product.name
+        message = f'Уважаемая компания {product.company.name}, {datetime.now()} вам поступил отклик на продукт {product.name}'
+        send_email_task.delay(email, subject, message)
         return redirect('home')
 
 
