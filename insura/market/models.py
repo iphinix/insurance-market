@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User, UserManager
@@ -48,7 +47,7 @@ class Response(models.Model):
     email = models.EmailField(verbose_name='E-Mail')
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Продукт')
-    date_send = models.DateTimeField(default=datetime.now, verbose_name='Время отправки')
+    date_send = models.DateTimeField(default=timezone.now, verbose_name='Время отправки')
     objects = models.Manager()
 
     def __str__(self):
