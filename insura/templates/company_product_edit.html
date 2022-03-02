@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Форма редактирования продукта
+<br>
+
+    <form method="POST">
+        {% csrf_token %}
+ {% for field in form %}
+        <p>
+          {{field.label_tag}}
+          {{field}}
+          {{field.errors}}
+        </p>
+ {% endfor %}
+        <input type="submit" value="Сохранить" >
+        <p>
+        <input type="submit" formaction="{% url 'company_product_delete' company_product.id %}" value="Удалить" >
+    </form>
+
+</body>
+</html>

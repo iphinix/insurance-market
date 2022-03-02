@@ -24,5 +24,10 @@ urlpatterns = [
     path('register/', views.RegisterCompanyView.as_view(), name='register'),
     path('login/', views.LoginCompanyView.as_view(), name='login'),
     path('logout/', views.LogoutCompanyView.as_view(), name='logout'),
-    path('company/<int:pk>', views.CompanyHomeView.as_view(), name='company'),
+    path('company/', views.CompanyHomeView.as_view(), name='company'),
+    path('company/profile/', views.CompanyProfile.as_view(), name='company_profile'),
+    path('company/product/add', views.CompanyProductAdd.as_view(), name='company_product_add'),
+    path('company/product/edit/<int:pk>', views.CompanyProductEdit.as_view(), name='company_product_edit'),
+    path('company/product/delete/<int:pk>', views.CompanyProductDelete.as_view(), name='company_product_delete'),
+    path('company/response/', views.CompanyResponseView.as_view(), name='company_response'),
 ]

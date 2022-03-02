@@ -7,18 +7,24 @@
 <body>
 Личный кабинет компании {{ company.name }}
 <br>
-
-    <form method="POST">
-        {% csrf_token %}
- {% for field in company_form %}
-        <p>
-          {{field.label_tag}}
-          {{field}}
-          {{field.errors}}
-        </p>
- {% endfor %}
-        <input type="submit" value="Сохранить" >
+<p>
+    <form  method="GET">
+        <input type="submit" value="Профиль" formaction="{% url 'company_profile' %}">
+    <p>
+        <button type="submit" formaction="{% url 'home' %}">Главная</button>
     </form>
-
+<br>
+    <a href="{% url 'company_product_add' %}">Добавить продукт</a>
+<p>
+    <a href="{% url 'company_response' %}">Отклики на продукты</a>
+<br>
+<table style="font-size: 125%; position: absolute; top: 35%; left: 30%">
+      {% for prod, count in prod_count %}
+         <tr>
+             <td> <a href="{% url 'company_product_edit' prod.id %}"> {{ prod.name }} </a> &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{% if count %} {{ count }} {% else %} 0 &nbsp&nbsp&nbsp&nbsp {% endif %}</td>
+         </tr>
+      {% endfor %}
+</table>
 </body>
 </html>

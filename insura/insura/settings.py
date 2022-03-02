@@ -94,20 +94,23 @@ DATABASES = {
         'USER': env('POSTGRES_USER'),
         'PASSWORD': env('POSTGRES_PASSWORD'),
         'HOST': env('POSTGRES_HOST'),
-        'PORT': 5432,
+        'PORT': env('POSTGRES_PORT'),
     }
 }
 
-EMAIL_HOST = 'smtp.mail.ru'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
+CELERY_BROKER_URL = f"amqp://{env('RABBITMQ_DEFAULT_USER')}:{env('RABBITMQ_DEFAULT_PASS')}@{env('RABBIT_HOST')}"
 
-CELERY_BROKER_URL = f"amqp://{env('RABBITMQ_DEFAULT_USER')}:{env('RABBITMQ_DEFAULT_PASS')}@rabbit:5672"
+REDIS_HOST = env('REDIS_HOST')
 
 LOGIN_REDIRECT_URL = '/'
+
+LOGIN_URL = '/login/'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

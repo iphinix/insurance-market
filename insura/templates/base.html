@@ -10,7 +10,7 @@
       <div style="font-size: 250%; color: blue; position: absolute; top: 3%; left: 1%">Страховая биржа</div>
 
 {% if request.user.is_authenticated %}
-      <div style="font-size: 110%" align="right" class="last"> <a href="{% url 'company' request.user.id %}"> {{user.username}} </a> | <a href="{% url 'logout' %}">Выйти</a></div>
+      <div style="font-size: 110%" align="right" class="last"> <a href="{% url 'company' %}"> {{user.username}} </a> | <a href="{% url 'logout' %}">Выйти</a></div>
 {% else %}
 <div style="font-size: 110%" align="right" class="last"><a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a></div>
 {% endif %}

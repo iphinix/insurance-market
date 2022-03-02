@@ -1,17 +1,7 @@
-import time
 from .celery import app
-from django.core.mail import send_mail
+from market.services import SendMailService
 
 
-@app.task
-def send_email_task(email, subject, message):
-
-    time.sleep(5)
-
-    return send_mail(
-        subject,
-        message,
-        'ors3000@mail.ru',
-        [email],
-        fail_silently=False,
-    )
+@app.task(name='sendmail')
+def send_email_task(email, subject, company):
+    SendMailService.sendmail(email, subject, company)
