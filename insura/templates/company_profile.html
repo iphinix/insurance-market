@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Личный кабинет компании {{ company.name }}
+<br>
+
+    <form method="POST">
+        {% csrf_token %}
+ {% for field in company_form %}
+        <p>
+          {{field.label_tag}}
+          {{field}}
+          {{field.errors}}
+        </p>
+ {% endfor %}
+        <input type="submit" value="Сохранить" >
+    </form>
+<br>
+    <a href="{% url 'company' %}">Назад</a>
+</body>
+</html>

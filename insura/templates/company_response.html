@@ -1,0 +1,27 @@
+      <div style="font-size: 150%; color: black; position: absolute; top: 5%; left: 15%">Список откликов на продукты</div>
+    <table style="font-size: 125%; position: absolute; top: 15%; left: 15%">
+        <tr>
+          <td>Имя &nbsp&nbsp&nbsp&nbsp</td>
+          <td>E-Mail &nbsp&nbsp&nbsp&nbsp</td>
+          <td>Продукт &nbsp&nbsp&nbsp&nbsp</td>
+          <td>Дата отклика</td>
+         </tr>
+      {% for item in response_list %}
+         <tr>
+          <td>{{ item.name }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ item.email }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ item.product.name }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ item.date_send }}</td>
+         </tr>
+        <tr>
+        </tr>
+      {% endfor %}
+    </table>
+<p style="font-size: 115%; position: absolute; top: 45%; left: 2%">
+    <a href="{% url 'company' %}">Домой</a>
+<br>
+<br>
+    <a href="{% url 'home' %}">Главная</a>
+</p>
+
+

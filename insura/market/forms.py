@@ -72,3 +72,9 @@ class ResponseModelForm(ModelForm):
     class Meta:
         model = Response
         fields = ['name', 'email']
+
+
+class CompanyProductAddEditForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'type', 'rate', 'period', 'description']
