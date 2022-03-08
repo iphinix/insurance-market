@@ -7,10 +7,11 @@ from .models import Product
 
 class SendMailService:
     @staticmethod
-    def sendmail(email, subject, company):
-        message = f'Уважаемая компания {company}, {datetime.now().date()} вам поступил отклик на продукт {subject}'
+    def sendmail(email, subject, company, uname, umail):
+        message = f'''Уважаемая компания {company}, вам поступил отклик на ваш продукт {subject}
+от: {uname} с e-mail: {umail} {datetime.now().date()} числа.'''
         return send_mail(
-            subject,
+            f'Отклик на продукт {subject}',
             message,
             'ors3000@mail.ru',
             [email],

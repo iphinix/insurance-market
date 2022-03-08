@@ -1,27 +1,43 @@
-      <div style="font-size: 150%; color: black; position: absolute; top: 5%; left: 15%">Список откликов на продукты</div>
-    <table style="font-size: 125%; position: absolute; top: 15%; left: 15%">
+{% extends 'base.html' %}
+{% block title %}Отклики{% endblock %}
+{% block content %}
+
+<table cellpadding="5px" width="100%" border="0">
+    <tr>
+        <td align="right" valign="top" style="font-size: 100%;">
+            <a href="{% url 'company_product_add' %}">Добавить продукт </a>|
+            <a href="{% url 'company' %}">Домой </a>|
+            <a href="{% url 'home' %}">На главную</a>
+        </td>
+    </tr>
+</table>
+
+    <table style="font-size: 125%; position: absolute; top: 15%; left: 20%">
+
+        <thead>
         <tr>
-          <td>Имя &nbsp&nbsp&nbsp&nbsp</td>
-          <td>E-Mail &nbsp&nbsp&nbsp&nbsp</td>
-          <td>Продукт &nbsp&nbsp&nbsp&nbsp</td>
-          <td>Дата отклика</td>
+          <td colspan="4" align="center" height="50px">
+           <div style="font-size: 120%; color: blue; font-weight: normal">Список откликов</div>
+          </td>
+        </tr>
+         <tr style="font-weight: bold">
+          <td width="175px">Имя</td>
+          <td width="225px">E-Mail</td>
+          <td width="200px">Продукт</td>
+          <td width="300px">Дата отклика</td>
          </tr>
+        </thead>
       {% for item in response_list %}
          <tr>
-          <td>{{ item.name }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ item.email }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ item.product.name }} &nbsp&nbsp&nbsp&nbsp</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.product.name }}</td>
           <td>{{ item.date_send }}</td>
          </tr>
-        <tr>
-        </tr>
+         <tr>
+         </tr>
       {% endfor %}
     </table>
-<p style="font-size: 115%; position: absolute; top: 45%; left: 2%">
-    <a href="{% url 'company' %}">Домой</a>
-<br>
-<br>
-    <a href="{% url 'home' %}">Главная</a>
-</p>
 
 
+{% endblock %}
