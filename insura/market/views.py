@@ -25,7 +25,8 @@ class RegisterCompanyView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('home')
+        Company.objects.create(name='Компания-'+str(self.request.user.id), user_id=self.request.user.id)
+        return redirect('company_profile')
 
 
 class LoginCompanyView(LoginView):
@@ -37,16 +38,6 @@ class LogoutCompanyView(View):
     def get(self, *args, **kwargs):
         logout(self.request)
         return redirect('home')
-
-
-class ProductListView(ListView):
-    model = Product
-    template_name = 'index0.html'
-    success_url = 'home'
-
-    def get_queryset(self):
-        qs = Product.objects.filter()
-        return qs
 
 
 class ProductFilterView(View):
@@ -69,7 +60,6 @@ class ProductFilterViewES(View):
     def get(self, request):
         product_model_form = ProductModelFormES()
         product_filter = FilterServiceES.get_queryset(request)
-        print('Ключи:', r_products.keys())
         return render(request, self.template_name, {'products': product_filter, 'filter_form': product_model_form})
 
     def post(self, request):
@@ -97,11 +87,13 @@ class ProductDetailView(View):
         response.company_id = product.company_id
         response.product_id = product.pk
         response.save()
+        uname = request.POST.get('name')
+        umail = request.POST.get('email')
         email = product.company.email
         subject = product.name
         company = product.company.name
         send_email_task.apply_async(
-            (email, subject, company),
+            (email, subject, company, uname, umail),
             retry=True,
             retry_policy={
                 'max_retries': 10,

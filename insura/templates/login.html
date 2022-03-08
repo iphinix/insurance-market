@@ -1,18 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form style="font-size: 120%; position: absolute; top: 30%; left: 40%" method="post">
+{% extends 'base.html' %}
+{% block title %}Авторизация{% endblock %}
+{% block content %}
+
+<table cellpadding="5px" width="100%" border="0">
+    <tr>
+        <td align="right" valign="top" style="font-size: 100%;">
+            <a href="{% url 'home' %}">На главную</a>
+        </td>
+    </tr>
+</table>
+
+<form style="font-size: 115%; position: absolute; top: 30%; left: 40%" method="post">
     {% csrf_token %}
-<div class="form-error">{{ form.non_field_errors }}</div>
-{% for f in form %}
-<p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
-<div class="form-error">{{ f.errors }}</div>
-{% endfor %}
-    <button type="submit">Войти</button>
+    {% for field in form %}
+        {{field.label_tag}} <br>
+        {{ field }} <br>
+    <div class="form-error">{{ field.errors }}</div>
+    {% endfor %}
+    <br>
+    <button class="btn-lg" type="submit">Войти</button>
 </form>
-</body>
-</html>
+
+{% endblock %}
+
+

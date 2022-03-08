@@ -1,24 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-Форма создания нового продукта
-<br>
+{% extends 'base.html' %}
+{% block title %}Добавить продукт{% endblock %}
+{% block content %}
 
-    <form method="POST">
+<table cellpadding="5px" width="100%" border="0">
+    <tr>
+        <td width="50%" align="left" style="font-size: 150%; color: blue;">Форма ввода нового продукта</td>
+        <td align="right" valign="top" style="font-size: 100%;">
+            <a href="{% url 'company_response' %}">Отклики </a>|
+            <a href="{% url 'company' %}">Домой </a>|
+            <a href="{% url 'home' %}">На главную</a>
+        </td>
+    </tr>
+</table>
+
+    <form method="POST" style="margin: 15px">
         {% csrf_token %}
- {% for field in form %}
-        <p>
-          {{field.label_tag}}
-          {{field}}
-          {{field.errors}}
-        </p>
- {% endfor %}
-        <input type="submit" value="Сохранить" >
+        {% for field in form %}
+          <span class="label-hm"> {{field.label_tag}} </span> <br>
+          {{field}} <br>
+          <div class="form-error">{{ field.errors }}</div>
+        {% endfor %}
+    <br>
+    <button class="btn-lg" type="submit">Добавить</button>
     </form>
 
-</body>
-</html>
+{% endblock %}

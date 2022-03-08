@@ -43,7 +43,7 @@ class Product(models.Model):
 
 
 class Response(models.Model):
-    name = models.CharField(max_length=50, verbose_name='ФИО')
+    name = models.CharField(max_length=50, verbose_name='Имя')
     email = models.EmailField(verbose_name='E-Mail')
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Продукт')

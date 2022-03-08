@@ -1,36 +1,73 @@
 {% extends 'base.html' %}
-
+{% block title %}Страховая биржа{% endblock %}
 {% block content %}
-      <div style="font-size: 225%; color: blue; position: absolute; top: 15%; left: 40%">Список продуктов компаний</div>
-<form  method="post">
-       {% csrf_token %}
-        <span style="font-size: 125%; position: absolute; top: 20%; left: 2%">{{filter_form.as_p}}</span>
-        <input style="font-size: 110%; position: absolute; top: 70%; left: 5%" type="submit" value="Применить"/>
-</form>
-<form  action="" method="get">
-        <input style="font-size: 110%; position: absolute; top: 77%; left: 5%" type="submit" value=" Сбросить "/>
-</form>
 
-    <table style="font-size: 125%; position: absolute; top: 30%; left: 30%">
-         <tr>
-          <td>Тип &nbsp&nbsp&nbsp&nbsp</td>
-          <td>Продукт &nbsp&nbsp&nbsp&nbsp</td>
-          <td>Ставка &nbsp&nbsp&nbsp&nbsp</td>
-          <td>Период &nbsp&nbsp&nbsp&nbsp</td>
-          <td>Компания</td>
+<table cellpadding="5px" width="100%" border="0">
+    <tr>
+        <td width="50%" align="left" style="font-size: 250%; color: blue;">Страховая биржа</td>
+        <td width="50%" align="right" valign="top" style="font-size: 100%;">
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'company' %}"> {{user.username}}</a> | <a href="{% url 'logout' %}">Выйти</a>
+          {% else %}
+            <a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a>
+          {% endif %}
+        </td>
+    </tr>
+</table>
+
+<table cellpadding="20px" width="100%" border="0">
+<tr>
+    <td width="30%">
+      <form  method="post">
+        <br>
+        {% csrf_token %}
+        {% for field in filter_form %}
+        <span class="label-hm"> {{field.label_tag}} </span>
+        <div> {{field}} </div>
+        {% endfor %}
+       <br>
+        <button class="btn" type="submit">Применить</button>
+      </form>
+        <p>
+      <form  action="" method="get">
+        <button class="btn" type="submit">Сбросить</button>
+      </form>
+    </td>
+
+    <td align="left" valign="top">
+        <table style="font-size: 105%;" border="0">
+        <thead>
+        <tr>
+          <td colspan="5" align="center" height="50px">
+           <div style="font-size: 150%; color: blue; font-weight: normal">Список продуктов компаний</div>
+          </td>
+        </tr>
+         <tr style="font-weight: bold">
+          <td width="180px">Тип</td>
+          <td width="200px">Продукт</td>
+          <td width="100px">Ставка</td>
+          <td width="130px">Период</td>
+          <td width="150px">Компания</td>
          </tr>
-      {% for element in products %}
+        </thead>
+         {% for row in products %}
          <tr>
-          <td>{{ element.type }} &nbsp&nbsp&nbsp&nbsp</td>
-             <td> <a href="{% url 'product' element.id %}"> {{ element.name }} </a> &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.rate }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.period }} &nbsp&nbsp&nbsp&nbsp</td>
-          <td>{{ element.company.name }}</td>
+          <td>{{ row.type }}</td>
+             <td> <a href="{% url 'product' row.id %}"> {{ row.name }} </a> </td>
+          <td>{{ row.rate }} </td>
+          <td>{{ row.period }} </td>
+          <td>{{ row.company.name }}</td>
          </tr>
         <tr>
         </tr>
-      {% endfor %}
-    </table>
+        {% endfor %}
+        </table>
+    </td>
+</tr>
+</table>
+
+
+
+
+
 {% endblock %}
-
-
