@@ -1,22 +1,45 @@
 from datetime import datetime
-from django.core.mail import send_mail
 from .documents import ProductDocument
 from elasticsearch_dsl.query import Q
 from .models import Product
+from insura.tasks import send_email_task
+from django.core.cache import cache
 
 
-class SendMailService:
-    @staticmethod
-    def sendmail(email, subject, company, uname, umail):
-        message = f'''Уважаемая компания {company}, вам поступил отклик на ваш продукт {subject}
+def view_count_incr(pk):
+    cache.get_or_set(f"/product/{pk}", 0)
+    cache.incr(f"/product/{pk}")
+
+
+def zip_product_counter(company):
+    products = Product.objects.filter(company_id=company.id)
+    counters = []
+    for prod in products:
+        counters.append(cache.get(f"/product/{prod.id}"))
+    return zip(products, counters)
+
+
+def mail_response(product, response):
+
+    email = product.company.email
+    prod_item = product.name
+    subject = f'Отклик на продукт {product.name}'
+    company = product.company.name
+    uname = response.name
+    umail = response.email
+    message = f'''Уважаемая компания {company}, вам поступил отклик на ваш продукт {prod_item}
 от: {uname} с e-mail: {umail} {datetime.now().date()} числа.'''
-        return send_mail(
-            f'Отклик на продукт {subject}',
-            message,
-            'ors3000@mail.ru',
-            [email],
-            fail_silently=False,
-        )
+
+    send_email_task.apply_async(
+        (subject, message, email),
+        retry=True,
+        retry_policy={
+            'max_retries': 10,
+            'interval_start': 30,
+            'interval_step': 30,
+            'interval_max': 30,
+        }
+    )
 
 
 class FilterServiceES:

@@ -1,7 +1,8 @@
 from .celery import app
-from market.services import SendMailService
+from django.core.mail import send_mail
+from insura.settings import EMAIL_ADDR_FROM
 
 
 @app.task(name='sendmail')
-def send_email_task(email, subject, company, uname, umail):
-    SendMailService.sendmail(email, subject, company, uname, umail)
+def send_email_task(subject, message, email):
+    send_mail(subject, message, EMAIL_ADDR_FROM, [email], fail_silently=False)

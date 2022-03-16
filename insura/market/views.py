@@ -1,21 +1,15 @@
-from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
-from django.views.generic import View, CreateView, ListView, DetailView, UpdateView
-from django.contrib import auth
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import render, redirect
+from django.views.generic import View, CreateView, ListView
+from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView
 from .forms import (RegisterCompanyForm, LoginCompanyForm, ProductModelForm,
                     ProductModelFormES, ResponseModelForm, CompanyModelForm,
                     CompanyProductAddEditForm)
-from .models import Company, Product, Response, User
-from insura.tasks import send_email_task
-import redis
-from insura.settings import REDIS_HOST
+from .models import Company, Product, Response
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .services import FilterServiceES, FilterService
-
-
-r_products = redis.Redis(host=REDIS_HOST, decode_responses=True)
+from .services import FilterServiceES, FilterService, mail_response, view_count_incr, zip_product_counter
+from django.core.cache import cache
 
 
 class RegisterCompanyView(CreateView):
@@ -74,10 +68,7 @@ class ProductDetailView(View):
     def get(self, request, *args, **kwargs):
         product = Product.objects.get(pk=kwargs['pk'])
         response_model_form = ResponseModelForm()
-        counter = r_products.get(f"/product/{kwargs['pk']}")
-        if not counter:
-            counter = 0
-        r_products.set(f"/product/{kwargs['pk']}", int(counter)+1)
+        view_count_incr(kwargs['pk'])
         return render(request, self.template_name, {'product': product, 'response_form': response_model_form})
 
     def post(self, request, *args, **kwargs):
@@ -87,21 +78,7 @@ class ProductDetailView(View):
         response.company_id = product.company_id
         response.product_id = product.pk
         response.save()
-        uname = request.POST.get('name')
-        umail = request.POST.get('email')
-        email = product.company.email
-        subject = product.name
-        company = product.company.name
-        send_email_task.apply_async(
-            (email, subject, company, uname, umail),
-            retry=True,
-            retry_policy={
-                'max_retries': 10,
-                'interval_start': 30,
-                'interval_step': 30,
-                'interval_max': 30,
-            }
-        )
+        mail_response(product, response)
         return redirect('home')
 
 
@@ -111,11 +88,8 @@ class CompanyHomeView(View):
 
     def get(self, request, *args, **kwargs):
         company = Company.objects.get(user_id=request.user.id)
-        products = Product.objects.filter(company_id=company.id)
-        counters = []
-        for prod in products:
-            counters.append(r_products.get(f"/product/{prod.id}"))
-        return render(request, self.template_name, {'company': company, 'prod_count': zip(products, counters)})
+        prod_count = zip_product_counter(company)
+        return render(request, self.template_name, {'company': company, 'prod_count': prod_count})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -170,7 +144,7 @@ class CompanyProductEdit(View):
 class CompanyProductDelete(View):
     def post(self, request, *args, **kwargs):
         Product.objects.get(pk=kwargs['pk']).delete()
-        r_products.delete(f"/product/{kwargs['pk']}")
+        cache.delete(f"/product/{kwargs['pk']}")
         return redirect('company')
 
 
