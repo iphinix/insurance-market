@@ -9,9 +9,13 @@ Elasticsearch,
 Celery,
 Rabbitmq
 
-Чтобы поднять заготовку приложения, 
+Чтобы поднять заготовку приложения 
 ```sh
 docker-compose up -d
+```
+Чтобы выполнить тесты
+```sh
+docker-compose exec web python manage.py test
 ```
 Приложение доступно по адресу:
 http://localhost:8000/
