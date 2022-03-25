@@ -7,7 +7,7 @@ from market import forms, models, services, views, documents
 
 class MarketTestCase(TestCase):
     def setUp(self):
-        call_command('flush', '--noinput')
+        call_command('flush', '--no-input')
         self.client = Client()
         self.factory = RequestFactory()
 
@@ -27,13 +27,14 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'register.html')
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Регистрация', status_code=200, html=True)
 
         response = self.client.post(url, {'username': 'user456', 'password1': 'Awvrkt#2', 'password2': 'Awvrkt#2'})
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/company/profile/')
+
+        response = self.client.login(username='user456', password='Awvrkt#2')
+        self.assertTrue(response)
 
     @tag('1')
     def test_login_company_view(self):
@@ -42,13 +43,13 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'login.html')
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Авторизация', status_code=200, html=True)
 
         response = self.client.post(url, {'username': 'user123', 'password': 'pass123'})
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url='/company/', status_code=302)
+
+        response = self.client.get('/company/')
+        self.assertEqual(str(response.context['user']), 'user123')
 
     @tag('2')
     def test_logout_company_view(self):
@@ -57,7 +58,7 @@ class MarketTestCase(TestCase):
         self.assertEquals(resolve(url).func.view_class, views.LogoutCompanyView)
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url='/', status_code=302)
 
     @tag('3')
     def test_product_filter_view_es(self):
@@ -66,9 +67,6 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'index.html')
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.post(url)
         self.assertEqual(response.status_code, 200)
 
         data_true = {
@@ -93,11 +91,11 @@ class MarketTestCase(TestCase):
         form = forms.ProductModelFormES(data=data_true)
         self.assertTrue(form.is_valid())
 
-        form = forms.ProductModelFormES(data={})
-        self.assertTrue(form.is_valid())
-
         form = forms.ProductModelFormES(data=data_false)
         self.assertFalse(form.is_valid())
+
+        response = self.client.post(url, {'type': 'Автострахование', 'period': '1 год'})
+        self.assertContains(response, text='Первая компания', status_code=200, html=True)
 
     @tag('4')
     def test_product_filter_view(self):
@@ -125,9 +123,6 @@ class MarketTestCase(TestCase):
         form = forms.ProductModelForm(data=data_true)
         self.assertTrue(form.is_valid())
 
-        form = forms.ProductModelForm(data={})
-        self.assertTrue(form.is_valid())
-
         form = forms.ProductModelForm(data=data_false)
         self.assertFalse(form.is_valid())
 
@@ -135,11 +130,7 @@ class MarketTestCase(TestCase):
         response = views.ProductFilterView.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
-        request = self.factory.post(url)
-        response = views.ProductFilterView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
-
-        request = self.factory.post('/', {'type': 'Автострахование', 'rate_min_field': 4})
+        request = self.factory.post(url, {'type': 'Автострахование', 'rate_min_field': 4})
         qs = services.FilterService().get_queryset(request)
         self.assertQuerysetEqual(qs, models.Product.objects.filter(type='Автострахование', rate=5))
 
@@ -150,7 +141,7 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'product.html')
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, text='Описание продукта', status_code=200, html=True)
 
         data_true = {
             'name': 'Имя',
@@ -164,17 +155,20 @@ class MarketTestCase(TestCase):
         self.assertFalse(form.is_valid())
 
         response = self.client.post(url, data_true)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url='/', status_code=302)
 
     @tag('6')
     def test_company_home_view(self):
         url = reverse('company')
-        self.client.login(username='user123', password='pass123')
         self.assertEquals(resolve(url).func.view_class, views.CompanyHomeView)
 
         response = self.client.get(url)
+        self.assertRedirects(response, '/login/?next=/company/', 302)
+
+        self.client.login(username='user123', password='pass123')
+        response = self.client.get(url)
         self.assertTemplateUsed(response, 'company.html')
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, text='Автопродукт', status_code=200, html=True)
 
     @tag('7')
     def test_company_profile(self):
@@ -184,7 +178,7 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'company_profile.html')
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, text='Профиль', status_code=200, html=False)
 
         data_true = {
             'name': 'Имя',
@@ -196,7 +190,7 @@ class MarketTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
         response = self.client.post(url, data_true)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url='/company/', status_code=302)
 
     @tag('8')
     def test_company_product_add(self):
@@ -206,7 +200,7 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'company_product_add.html')
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, text='Форма ввода нового продукта', status_code=200, html=False)
 
         data_true = {
             'name': 'имя',
@@ -220,7 +214,7 @@ class MarketTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
         response = self.client.post(url, data_true)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url='/company/', status_code=302)
 
     @tag('9')
     def test_company_product_edit(self):
@@ -230,7 +224,7 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'company_product_edit.html')
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, text='Форма редактирования продукта', status_code=200, html=False)
 
         data_true = {
             'name': 'имя',
@@ -244,7 +238,7 @@ class MarketTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
         response = self.client.post(url, data_true)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url='/company/', status_code=302)
 
     @tag('10')
     def test_company_product_delete(self):
@@ -253,7 +247,7 @@ class MarketTestCase(TestCase):
         self.assertEquals(resolve(url).func.view_class, views.CompanyProductDelete)
 
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url='/company/', status_code=302)
 
     @tag('11')
     def test_company_response_view(self):
@@ -263,7 +257,7 @@ class MarketTestCase(TestCase):
 
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'company_response.html')
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, text='mail@mail.ru', status_code=200, html=False)
 
         request = self.factory.get(url)
         request.user = self.test_user
