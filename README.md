@@ -4,7 +4,7 @@
 Python,
 Django,
 Postgresql,
-Radis,
+Redis,
 Elasticsearch,
 Celery,
 Rabbitmq
